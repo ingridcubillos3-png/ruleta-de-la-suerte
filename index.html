@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Ruleta del Terror</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Creepster&display=swap">
+<style>
+:root{color-scheme:dark;--bg:#07040a;--panel:#140a1a;--line:#4a1020;--red:#c1121f;--glow:#ff2a3d;--txt:#eadfe6;--mut:#9a8695;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:radial-gradient(ellipse at 50% 0,#2a0b1f 0,var(--bg) 60%) fixed;color:var(--txt);font-family:Georgia,"Times New Roman",serif;min-height:100%;overflow-x:hidden}
+body::after{content:"";position:fixed;inset:0;pointer-events:none;background:radial-gradient(circle,transparent 45%,#000 120%);animation:flick 5s infinite}
+@keyframes flick{0%,92%,100%{opacity:1}93%{opacity:.6}95%{opacity:.9}97%{opacity:.5}}
+h1{font-family:Creepster,Georgia,fantasy;font-weight:400;text-align:center;font-size:clamp(2.2rem,7vw,4rem);margin:.4em 0 0;color:var(--glow);letter-spacing:3px;text-shadow:0 0 12px #ff2a3d,0 0 30px #7a0010;animation:glow 3s infinite alternate}
+@keyframes glow{to{text-shadow:0 0 4px #ff2a3d,0 0 14px #5a000c}}
+.sub{text-align:center;color:var(--mut);margin:0 0 .8em;font-style:italic}
+main{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:20px;max-width:1150px;margin:0 auto;padding:0 14px 30px}
+@media(max-width:850px){main{grid-template-columns:1fr}}
+.stage{display:flex;flex-direction:column;align-items:center;gap:14px}
+.wheelbox{position:relative;width:min(94vw,540px);aspect-ratio:1}
+canvas{width:100%;height:100%;display:block;filter:drop-shadow(0 0 22px #6a0014)}
+#ptr{position:absolute;top:-6px;left:50%;width:0;height:0;margin-left:-22px;border-left:22px solid transparent;border-right:22px solid transparent;border-top:56px solid var(--glow);filter:drop-shadow(0 0 8px #ff2a3d);transform-origin:50% 0;z-index:2}
+#ptr.tk{animation:wig .12s}
+@keyframes wig{50%{transform:rotate(-14deg)}}
+.btns{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+button,select,input[type=text]{font:inherit;color:var(--txt)}
+button{cursor:pointer;background:#25101f;border:1px solid var(--line);border-radius:10px;padding:9px 14px;transition:.15s}
+button:hover:not(:disabled){background:#3a1428;border-color:var(--red)}
+button:disabled{opacity:.45;cursor:not-allowed}
+#spin{font-family:Creepster,Georgia,fantasy;font-size:clamp(1.7rem,6vw,2.6rem);letter-spacing:3px;padding:12px 38px;color:#fff;background:linear-gradient(#e01e2e,#7d0614);border:2px solid #ff6b78;border-radius:14px;box-shadow:0 0 22px #c1121f;animation:pulse 1.6s infinite}
+#spin:disabled{animation:none;box-shadow:none}
+@keyframes pulse{50%{box-shadow:0 0 38px #ff2a3d;transform:scale(1.04)}}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:16px;box-shadow:0 0 18px #00000099}
+.panel h2{margin:0 0 10px;font-family:Creepster,Georgia,fantasy;font-weight:400;font-size:1.6rem;color:var(--glow);letter-spacing:2px}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:8px 0}
+select,input[type=text]{background:#0d0610;border:1px solid var(--line);border-radius:8px;padding:8px;flex:1;min-width:0}
+input[type=range]{flex:1;accent-color:var(--red)}
+label{font-size:.92rem;color:var(--mut)}
+#status{font-size:.85rem;color:var(--mut);min-height:1.2em}
+#list{max-height:300px;overflow-y:auto;padding-right:4px}
+.opt{display:flex;gap:6px;margin-bottom:6px}
+.opt button{padding:6px 10px}
+#over{position:fixed;inset:0;z-index:20;display:none;align-items:center;justify-content:center;background:radial-gradient(circle,rgba(70,0,12,.92),rgba(0,0,0,.96) 80%);text-align:center;padding:20px}
+#over.show{display:flex;animation:fl .9s}
+@keyframes fl{0%{background:#fff}15%{background:#900}100%{}}
+.card{max-width:92vw}
+.card small{display:block;font-size:clamp(1rem,3vw,1.5rem);color:#d8aab4;letter-spacing:4px;text-transform:uppercase}
+#res{font-family:Creepster,Georgia,fantasy;font-size:clamp(3rem,13vw,8rem);line-height:1.05;color:#ff3b4e;margin:.2em 0 .4em;word-break:break-word;animation:pop .9s cubic-bezier(.2,1.6,.4,1),shake 3s .9s infinite,rg 1.6s infinite alternate}
+@keyframes pop{from{transform:scale(0) rotate(-25deg);opacity:0}}
+@keyframes shake{0%,90%,100%{transform:none}92%{transform:translate(-6px,3px) rotate(-2deg)}95%{transform:translate(6px,-3px) rotate(2deg)}}
+@keyframes rg{to{text-shadow:0 0 10px #ff2a3d,0 0 50px #ff0020,0 6px 0 #5a000c}from{text-shadow:0 0 4px #ff2a3d,0 0 20px #800010}}
+.drip{position:absolute;top:0;width:8px;background:linear-gradient(#a00,#600);border-radius:0 0 8px 8px;animation:dr 4s infinite ease-in}
+@keyframes dr{from{height:0}60%{height:30vh}to{height:34vh;opacity:0}}
+</style>
+</head>
+<body>
+<h1>☠ RULETA DEL TERROR ☠</h1>
+<p class="sub">Gira... si te atreves. El destino ya te está esperando.</p>
+<main>
+ <section class="stage">
+  <div class="wheelbox"><div id="ptr"></div><canvas id="cv" width="640" height="640"></canvas></div>
+  <div class="btns"><button id="spin">GIRAR RULETA</button></div>
+  <div class="btns"><button id="again" disabled>🔁 Volver a girar</button><button id="sfxb">🔊 Efectos: ON</button></div>
+ </section>
+ <section>
+  <div class="panel">
+   <h2>🎵 Música de miedo</h2>
+   <div class="row"><select id="track">
+    <option value="1">1 · Música de suspenso</option>
+    <option value="2">2 · Terror psicológico</option>
+    <option value="3">3 · Sonidos de casa embrujada</option>
+    <option value="4">4 · Música de Halloween</option>
+    <option value="5">5 · Latidos de corazón y tensión</option>
+    <option value="6">6 · Terror intenso</option>
+   </select></div>
+   <div class="row"><button id="play">▶ Reproducir</button><button id="pause">⏸ Pausar</button><button id="stop">⏹ Detener</button></div>
+   <div class="row"><label for="vol">🔈 Volumen</label><input type="range" id="vol" min="0" max="1" step="0.01" value="0.6"></div>
+   <div class="row"><label for="file">📁 Mi música (MP3/WAV):</label><input type="file" id="file" accept="audio/*" style="max-width:100%;color:var(--mut)"></div>
+   <div class="row"><label><input type="checkbox" id="auto" checked> Iniciar música al girar</label></div>
+   <div class="row"><label for="after">Al terminar el giro:</label><select id="after"><option value="keep">Dejar sonando</option><option value="stop">Detener la música</option><option value="next">Cambiar a la siguiente</option></select></div>
+   <div id="status">Música detenida</div>
+  </div>
+  <div class="panel">
+   <h2>🕯 Opciones de la ruleta</h2>
+   <div id="list"></div>
+   <div class="row"><button id="add">➕ Agregar opción</button><button id="reset">↺ Restablecer</button></div>
+  </div>
+ </section>
+</main>
+<div id="over"><div class="card"><small>☠ El destino eligió ☠</small><div id="res"></div><div class="btns"><button id="again2">🔁 Volver a girar</button><button id="close">Cerrar</button></div></div></div>
+
+<script>
+const $=s=>document.querySelector(s),TAU=Math.PI*2;
+const DEF=["💀 Maldición","👻 Fantasma","🕷️ Araña","🎃 Calabaza","🧛 Vampiro","🪦 Tumba","🦇 Murciélago","🔪 Sobrevives"];
+const COL=["#7a0010","#2b0f3d","#0f4a2e","#b34700","#4a0f2e","#1a1a3a","#5c0a0a","#3a3a0f"];
+let opts=[...DEF],rot=0,spinning=false,lastIdx=-1,sfxOn=true;
+const cv=$("#cv"),g=cv.getContext("2d");
+
+/* ---------- Dibujo ---------- */
+function draw(){
+ const W=640,C=W/2,R=290,n=opts.length,arc=TAU/n,t=performance.now();
+ g.clearRect(0,0,W,W);
+ // aro exterior
+ let gr=g.createRadialGradient(C,C,R,C,C,C);gr.addColorStop(0,"#3a0610");gr.addColorStop(1,"#12040a");
+ g.beginPath();g.arc(C,C,C-4,0,TAU);g.fillStyle=gr;g.fill();g.lineWidth=4;g.strokeStyle="#ff2a3d";g.stroke();
+ for(let i=0;i<24;i++){const a=i/24*TAU,f=.35+.65*Math.abs(Math.sin(t/260+i*1.7));
+  g.beginPath();g.arc(C+Math.cos(a)*(R+15),C+Math.sin(a)*(R+15),5,0,TAU);g.fillStyle=`rgba(255,${60+f*80|0},40,${f})`;g.shadowColor="#f22";g.shadowBlur=10*f;g.fill();g.shadowBlur=0}
+ for(let i=0;i<n;i++){
+  const a0=rot+i*arc-Math.PI/2,a1=a0+arc;
+  g.beginPath();g.moveTo(C,C);g.arc(C,C,R,a0,a1);g.closePath();
+  const sg=g.createRadialGradient(C,C,20,C,C,R);sg.addColorStop(0,"#000");sg.addColorStop(.35,COL[i%COL.length]);sg.addColorStop(1,COL[i%COL.length]);
+  g.fillStyle=sg;g.fill();g.lineWidth=3;g.strokeStyle="#000";g.stroke();
+  g.save();g.translate(C,C);g.rotate(a0+arc/2);g.textAlign="right";g.textBaseline="middle";
+  let fs=n>12?20:26,txt=opts[i]||"…";g.font=`bold ${fs}px Georgia,serif`;
+  const maxW=R-95;while(g.measureText(txt).width>maxW&&fs>11){fs--;g.font=`bold ${fs}px Georgia,serif`}
+  g.shadowColor="#000";g.shadowBlur=6;g.fillStyle="#fff";g.fillText(txt,R-22,0);g.restore();
+ }
+ g.shadowBlur=0;
+ g.beginPath();g.arc(C,C,48,0,TAU);g.fillStyle="#0a0307";g.fill();g.lineWidth=5;g.strokeStyle="#ff2a3d";g.stroke();
+ g.font="44px serif";g.textAlign="center";g.textBaseline="middle";g.fillText("💀",C,C+3);
+}
+function loop(){draw();requestAnimationFrame(loop)}
+function idxAt(){const a=((-rot)%TAU+TAU)%TAU;return Math.floor(a/(TAU/opts.length))%opts.length}
+
+/* ---------- Audio ---------- */
+let mctx,sctx,mgain,sgain,curStop=null,paused=false,uploads={};
+function initAudio(){
+ if(mctx)return;const AC=window.AudioContext||window.webkitAudioContext;
+ mctx=new AC();sctx=new AC();
+ mgain=mctx.createGain();mgain.gain.value=+$("#vol").value;mgain.connect(mctx.destination);
+ sgain=sctx.createGain();sgain.gain.value=.8;sgain.connect(sctx.destination);
+}
+function note(c,dest,type,f,dur,gv=.15,f2){
+ const o=c.createOscillator(),gn=c.createGain(),t=c.currentTime;o.type=type;o.frequency.setValueAtTime(f,t);
+ if(f2)o.frequency.exponentialRampToValueAtTime(f2,t+dur);
+ gn.gain.setValueAtTime(0,t);gn.gain.linearRampToValueAtTime(gv,t+Math.min(.04,dur/3));gn.gain.exponentialRampToValueAtTime(.0001,t+dur);
+ o.connect(gn).connect(dest);o.start(t);o.stop(t+dur+.05);
+}
+function nbuf(c,dur){const b=c.createBuffer(1,c.sampleRate*dur,c.sampleRate),d=b.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1;return b}
+function noise(c,dest,dur,ftype,f1,gv,f2){
+ const s=c.createBufferSource(),fl=c.createBiquadFilter(),gn=c.createGain(),t=c.currentTime;
+ s.buffer=nbuf(c,dur);fl.type=ftype;fl.frequency.setValueAtTime(f1,t);if(f2)fl.frequency.exponentialRampToValueAtTime(f2,t+dur);
+ gn.gain.setValueAtTime(gv,t);gn.gain.exponentialRampToValueAtTime(.0001,t+dur);
+ s.connect(fl).connect(gn).connect(dest);s.start(t);
+}
+function mk(c,out){
+ const bus=c.createGain(),nodes=[],timers=[];bus.connect(out);
+ return{
+  osc(type,f,gv=.1,dest=bus){const o=c.createOscillator(),gn=c.createGain();o.type=type;o.frequency.value=f;gn.gain.value=gv;o.connect(gn).connect(dest);o.start();nodes.push(o);return{o,gn}},
+  lfo(param,rate,depth){const l=c.createOscillator(),gn=c.createGain();l.frequency.value=rate;gn.gain.value=depth;l.connect(gn).connect(param);l.start();nodes.push(l)},
+  every(fn,ms){fn();timers.push(setInterval(()=>{if(c.state==="running")fn()},ms))},
+  bus,nodes,
+  stop(){timers.forEach(clearInterval);bus.gain.setTargetAtTime(0,c.currentTime,.12);setTimeout(()=>{nodes.forEach(n=>{try{n.stop()}catch(e){}});bus.disconnect()},700)}
+ };
+}
+const R=(a,b)=>a+Math.random()*(b-a),pick=a=>a[Math.random()*a.length|0];
+const TRACKS={
+ 1(c,m){ // suspenso
+  const lp=c.createBiquadFilter();lp.type="lowpass";lp.frequency.value=220;lp.connect(m.bus);
+  m.osc("sawtooth",55,.25,lp);m.osc("sawtooth",55.6,.25,lp);m.osc("sine",27.5,.4);m.lfo(lp.frequency,.15,120);
+  m.every(()=>note(c,m.bus,"sawtooth",pick([880,932,1245,1480]),5,.035),6500);
+ },
+ 2(c,m){ // psicológico
+  const t=c.createGain();t.gain.value=.12;t.connect(m.bus);m.lfo(t.gain,5.5,.08);
+  [233,247,349,370].forEach(f=>m.osc("sine",f,.25,t));
+  m.every(()=>note(c,m.bus,"sine",pick([1244,1319,1480,1760]),3,.07),2800);
+  m.every(()=>note(c,m.bus,"triangle",R(60,90),2.5,.2,30),9000);
+ },
+ 3(c,m){ // casa embrujada
+  const s=c.createBufferSource(),bp=c.createBiquadFilter(),gn=c.createGain();s.buffer=nbuf(c,3);s.loop=true;bp.type="bandpass";bp.frequency.value=500;bp.Q.value=2;gn.gain.value=.35;
+  s.connect(bp).connect(gn).connect(m.bus);s.start();m.nodes.push(s);m.lfo(bp.frequency,.18,300);m.osc("sine",48,.3);
+  m.every(()=>note(c,m.bus,"sawtooth",R(150,260),R(1,1.8),.05,R(60,110)),5200);
+  m.every(()=>{if(Math.random()<.6){note(c,m.bus,"sine",80,.25,.6,35);setTimeout(()=>note(c,m.bus,"sine",75,.25,.5,32),380)}},6800);
+ },
+ 4(c,m){ // Halloween
+  const mel=[659,0,622,659,0,622,659,494,587,523,440,0,262,330,440,494,0,330,415,494,523,0,330,0,659,0,622,659,0,622,659,494,587,523,440,0,330,440,523,659,0,622,587,523,494,0,440,0];
+  let i=0;m.every(()=>{const f=mel[i%mel.length];if(f)note(c,m.bus,"triangle",f,.45,.2);if(i%4===0)note(c,m.bus,"sine",i%8===0?110:82.4,.9,.35);if(i%2===1)noise(c,m.bus,.05,"highpass",6000,.04);i++},300);
+ },
+ 5(c,m){ // latidos
+  m.osc("sine",45,.25);const t=m.osc("sine",1500,.012);m.lfo(t.gn.gain,3,.01);
+  m.every(()=>{note(c,m.bus,"sine",65,.28,.9,38);setTimeout(()=>note(c,m.bus,"sine",58,.25,.7,35),300)},1050);
+ },
+ 6(c,m){ // intenso
+  const lp=c.createBiquadFilter();lp.type="lowpass";lp.frequency.value=450;lp.connect(m.bus);
+  m.osc("sawtooth",41,.3,lp);m.osc("sawtooth",43.2,.3,lp);m.lfo(lp.frequency,.3,250);
+  const tr=c.createGain();tr.gain.value=.12;tr.connect(m.bus);m.osc("square",82,.2,tr);m.lfo(tr.gain,8,.1);
+  m.every(()=>note(c,m.bus,"sawtooth",R(900,1300),.9,.05,R(2000,2800)),2600);
+  m.every(()=>noise(c,m.bus,.5,"lowpass",600,.5,60),1300);
+ }
+};
+function startTrack(v){
+ if(uploads[v]){const s=mctx.createBufferSource(),b=mctx.createGain();s.buffer=uploads[v];s.loop=true;s.connect(b).connect(mgain);s.start();return()=>{try{s.stop()}catch(e){}}}
+ const m=mk(mctx,mgain);TRACKS[v](mctx,m);return()=>m.stop();
+}
+function isPlaying(){return !!curStop&&!paused}
+function playMusic(){
+ initAudio();
+ if(curStop&&paused){mctx.resume();paused=false;st();return}
+ if(curStop)curStop();
+ mctx.resume();paused=false;curStop=startTrack($("#track").value);st();
+}
+function pauseMusic(){if(!curStop||paused)return;mctx.suspend();paused=true;st()}
+function stopMusic(){if(curStop){curStop();curStop=null}paused=false;if(mctx)mctx.resume();st()}
+function st(){const o=$("#track").selectedOptions[0].textContent;$("#status").textContent=!curStop?"Música detenida":paused?"⏸ En pausa: "+o:"▶ Sonando: "+o}
+$("#play").onclick=playMusic;$("#pause").onclick=pauseMusic;$("#stop").onclick=stopMusic;
+$("#track").onchange=()=>{if(curStop&&!paused)playMusic();else{if(curStop){curStop();curStop=null;paused=false}st()}};
+$("#vol").oninput=e=>{initAudio();mgain.gain.value=+e.target.value};
+$("#file").onchange=async e=>{
+ const f=e.target.files[0];if(!f)return;initAudio();
+ try{
+  const buf=await mctx.decodeAudioData(await f.arrayBuffer());
+  const v="u"+Date.now(),o=document.createElement("option");o.value=v;o.textContent="🎧 "+f.name;uploads[v]=buf;
+  $("#track").appendChild(o);$("#track").value=v;playMusic();
+ }catch(err){$("#status").textContent="No se pudo leer ese archivo de audio."}
+ e.target.value="";
+};
+$("#sfxb").onclick=()=>{sfxOn=!sfxOn;$("#sfxb").textContent=sfxOn?"🔊 Efectos: ON":"🔇 Efectos: OFF"};
+function tick(){if(sfxOn&&sctx)note(sctx,sgain,"square",R(700,1000),.04,.06)}
+function spinSfx(){if(!sfxOn||!sctx)return;sctx.resume();noise(sctx,sgain,5.8,"bandpass",250,.5,2200);note(sctx,sgain,"sawtooth",70,5.5,.08,260)}
+function revealSfx(){
+ if(!sfxOn||!sctx)return;sctx.resume();
+ note(sctx,sgain,"sine",95,1.8,.9,28);
+ note(sctx,sgain,"sawtooth",311,2.5,.12);note(sctx,sgain,"sawtooth",329,2.5,.12);note(sctx,sgain,"sawtooth",466,2.5,.08);
+ setTimeout(()=>note(sctx,sgain,"sawtooth",600,1.1,.09,2000),150);
+ noise(sctx,sgain,1.5,"lowpass",3000,.4,100);
+}
+
+/* ---------- Giro ---------- */
+function setBusy(b){spinning=b;$("#spin").disabled=b;$("#again").disabled=b;$("#again2").disabled=b;$("#add").disabled=b;$("#reset").disabled=b;
+ document.querySelectorAll("#list button,#list input").forEach(x=>x.disabled=b);$("#spin").textContent=b?"GIRANDO...":"GIRAR RULETA"}
+function spin(){
+ if(spinning||opts.length<2)return;
+ closeRes();setBusy(true);initAudio();sctx.resume();
+ if($("#auto").checked&&!isPlaying())playMusic();
+ spinSfx();
+ const n=opts.length,arc=TAU/n,win=Math.random()*n|0,jit=R(.12,.88);
+ const want=((-(win+jit)*arc)%TAU+TAU)%TAU,cur=((rot%TAU)+TAU)%TAU;
+ const delta=(want-cur+TAU)%TAU+TAU*(5+(Math.random()*3|0));
+ const s=rot,e=rot+delta,dur=5800,t0=performance.now();lastIdx=idxAt();
+ (function f(t){
+  const p=Math.min(1,(t-t0)/dur),k=1-Math.pow(1-p,4);rot=s+(e-s)*k;
+  const i=idxAt();if(i!==lastIdx){lastIdx=i;tick();const pt=$("#ptr");pt.classList.remove("tk");void pt.offsetWidth;pt.classList.add("tk")}
+  if(p<1)requestAnimationFrame(f);else finish();
+ })(t0);
+}
+function finish(){
+ setBusy(false);renderList();$("#again").disabled=false;
+ const a=$("#after").value;if(a==="stop")stopMusic();
+ else if(a==="next"){const t=$("#track"),k=(t.selectedIndex+1)%t.options.length;t.selectedIndex=k;if(isPlaying())playMusic();else st()}
+ revealSfx();
+ $("#res").textContent=opts[idxAt()];
+ const ov=$("#over");ov.querySelectorAll(".drip").forEach(d=>d.remove());
+ for(let i=0;i<14;i++){const d=document.createElement("i");d.className="drip";d.style.left=R(2,98)+"%";d.style.animationDelay=R(0,3)+"s";ov.appendChild(d)}
+ ov.classList.add("show");
+}
+function closeRes(){$("#over").classList.remove("show")}
+$("#spin").onclick=spin;$("#again").onclick=spin;$("#again2").onclick=spin;$("#close").onclick=closeRes;
+
+/* ---------- Edición de opciones ---------- */
+function renderList(){
+ const L=$("#list");L.innerHTML="";
+ opts.forEach((o,i)=>{
+  const d=document.createElement("div");d.className="opt";
+  const inp=document.createElement("input");inp.type="text";inp.value=o;inp.maxLength=30;inp.setAttribute("aria-label","Opción "+(i+1));
+  inp.oninput=()=>{opts[i]=inp.value};
+  const b=document.createElement("button");b.textContent="✖";b.title="Eliminar";b.setAttribute("aria-label","Eliminar opción "+(i+1));
+  b.onclick=()=>{if(opts.length<=2){$("#status").textContent="Necesitas al menos 2 opciones.";return}opts.splice(i,1);renderList()};
+  d.append(inp,b);L.appendChild(d);
+ });
+ $("#add").disabled=spinning||opts.length>=16;
+}
+$("#add").onclick=()=>{if(opts.length<16){opts.push("👁️ Nueva opción "+(opts.length+1));renderList();const l=$("#list");l.scrollTop=l.scrollHeight}};
+$("#reset").onclick=()=>{opts=[...DEF];renderList()};
+document.addEventListener("keydown",e=>{if(e.key==="Escape")closeRes()});
+renderList();loop();
+</script>
+</body>
+</html>

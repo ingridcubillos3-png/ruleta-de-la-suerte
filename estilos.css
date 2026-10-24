@@ -1,0 +1,46 @@
+:root{color-scheme:dark;--bg:#07040a;--panel:#140a1a;--line:#4a1020;--red:#c1121f;--glow:#ff2a3d;--txt:#eadfe6;--mut:#9a8695;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:radial-gradient(ellipse at 50% 0,#2a0b1f 0,var(--bg) 60%) fixed;color:var(--txt);font-family:Georgia,"Times New Roman",serif;min-height:100%;overflow-x:hidden}
+body::after{content:"";position:fixed;inset:0;pointer-events:none;background:radial-gradient(circle,transparent 45%,#000 120%);animation:flick 5s infinite}
+@keyframes flick{0%,92%,100%{opacity:1}93%{opacity:.6}95%{opacity:.9}97%{opacity:.5}}
+h1{font-family:Creepster,Georgia,fantasy;font-weight:400;text-align:center;font-size:clamp(2.2rem,7vw,4rem);margin:.4em 0 0;color:var(--glow);letter-spacing:3px;text-shadow:0 0 12px #ff2a3d,0 0 30px #7a0010;animation:glow 3s infinite alternate}
+@keyframes glow{to{text-shadow:0 0 4px #ff2a3d,0 0 14px #5a000c}}
+.sub{text-align:center;color:var(--mut);margin:0 0 .8em;font-style:italic}
+main{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:20px;max-width:1150px;margin:0 auto;padding:0 14px 30px}
+@media(max-width:850px){main{grid-template-columns:1fr}}
+.stage{display:flex;flex-direction:column;align-items:center;gap:14px}
+.wheelbox{position:relative;width:min(94vw,540px);aspect-ratio:1}
+canvas{width:100%;height:100%;display:block;filter:drop-shadow(0 0 22px #6a0014)}
+#ptr{position:absolute;top:-6px;left:50%;width:0;height:0;margin-left:-22px;border-left:22px solid transparent;border-right:22px solid transparent;border-top:56px solid var(--glow);filter:drop-shadow(0 0 8px #ff2a3d);transform-origin:50% 0;z-index:2}
+#ptr.tk{animation:wig .12s}
+@keyframes wig{50%{transform:rotate(-14deg)}}
+.btns{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+button,select,input[type=text]{font:inherit;color:var(--txt)}
+button{cursor:pointer;background:#25101f;border:1px solid var(--line);border-radius:10px;padding:9px 14px;transition:.15s}
+button:hover:not(:disabled){background:#3a1428;border-color:var(--red)}
+button:disabled{opacity:.45;cursor:not-allowed}
+#spin{font-family:Creepster,Georgia,fantasy;font-size:clamp(1.7rem,6vw,2.6rem);letter-spacing:3px;padding:12px 38px;color:#fff;background:linear-gradient(#e01e2e,#7d0614);border:2px solid #ff6b78;border-radius:14px;box-shadow:0 0 22px #c1121f;animation:pulse 1.6s infinite}
+#spin:disabled{animation:none;box-shadow:none}
+@keyframes pulse{50%{box-shadow:0 0 38px #ff2a3d;transform:scale(1.04)}}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:16px;box-shadow:0 0 18px #00000099}
+.panel h2{margin:0 0 10px;font-family:Creepster,Georgia,fantasy;font-weight:400;font-size:1.6rem;color:var(--glow);letter-spacing:2px}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:8px 0}
+select,input[type=text]{background:#0d0610;border:1px solid var(--line);border-radius:8px;padding:8px;flex:1;min-width:0}
+input[type=range]{flex:1;accent-color:var(--red)}
+label{font-size:.92rem;color:var(--mut)}
+#status{font-size:.85rem;color:var(--mut);min-height:1.2em}
+#list{max-height:300px;overflow-y:auto;padding-right:4px}
+.opt{display:flex;gap:6px;margin-bottom:6px}
+.opt button{padding:6px 10px}
+#over{position:fixed;inset:0;z-index:20;display:none;align-items:center;justify-content:center;background:radial-gradient(circle,rgba(70,0,12,.92),rgba(0,0,0,.96) 80%);text-align:center;padding:20px}
+#over.show{display:flex;animation:fl .9s}
+@keyframes fl{0%{background:#fff}15%{background:#900}100%{}}
+.card{max-width:92vw}
+.card small{display:block;font-size:clamp(1rem,3vw,1.5rem);color:#d8aab4;letter-spacing:4px;text-transform:uppercase}
+#res{font-family:Creepster,Georgia,fantasy;font-size:clamp(3rem,13vw,8rem);line-height:1.05;color:#ff3b4e;margin:.2em 0 .4em;word-break:break-word;animation:pop .9s cubic-bezier(.2,1.6,.4,1),shake 3s .9s infinite,rg 1.6s infinite alternate}
+@keyframes pop{from{transform:scale(0) rotate(-25deg);opacity:0}}
+@keyframes shake{0%,90%,100%{transform:none}92%{transform:translate(-6px,3px) rotate(-2deg)}95%{transform:translate(6px,-3px) rotate(2deg)}}
+@keyframes rg{to{text-shadow:0 0 10px #ff2a3d,0 0 50px #ff0020,0 6px 0 #5a000c}from{text-shadow:0 0 4px #ff2a3d,0 0 20px #800010}}
+.drip{position:absolute;top:0;width:8px;background:linear-gradient(#a00,#600);border-radius:0 0 8px 8px;animation:dr 4s infinite ease-in}
+@keyframes dr{from{height:0}60%{height:30vh}to{height:34vh;opacity:0}}
